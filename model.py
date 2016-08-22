@@ -1,41 +1,21 @@
 #!/usr/local/bin/python
 
 """
-This is an attempt to build a model that predicts the best price for the payer based on the current situation in the
-auction. Its best part is that, it will be try to find based on the inputs as of THIS moment.  All that we need to tell
-him is the current payer list, probable price which is base_price * 4, sold_price which is the actual price he was
-bought for, team which bought the player.
+Simple script to help read the Clash player details and assemble the information
+in a single view that helps me during the auction.
 
-# Player    base_price  max_price   sold_price  team
+Anyone can use this. Just
 
-Algorithm
+python model.py -p <player1> -p <player2> -t <team1> -t <team2> etc.,
 
-Identify the given and calculatable inputs
-    total_budget            Max budget = Rs 19,75,000 for 2016
-    male_count_required     Number of male players to buy
-    female_count_required   Number of Female players to buy
-    budget_remaining        Budget Left with each team
-    male_count              Number of male players bought
-    female_count            Number of female players bought
-
-Identify the player inputs
-    gender          male or female
-    base_price
-    list_of_sports  tuple - List of sports he/she plays along with the rank.
-
-Identify the team details as inputs
-    team            name of the team
-    sport           List of players in set of sports along with their rank.
-    high_sports     List of sports to strengthen 100%
-    medium_sports   List of sports to strengthen 75%
-    low_sports      List of sports to strengthen 50%
-    super_low_sports
+player -- userlogin
+team -- Ninja, Samurai, Spartans, Knights
 
 """
 from pandas import pandas
 from tabulate import tabulate
 from optparse import OptionParser
-
+import getpass
 
 def team_matrix(player_df, details, team, sports):
     players = player_df.loc[:, ['Team', 'Login', 'Gender', 'Game', 'Ranks', 'Price', 'Sold For']].drop_duplicates()
@@ -109,8 +89,9 @@ Sports = ['Athletics 4+2', 'Badminton 4+1', 'Basketball 4', 'Carrom 3+1', 'Chess
           'Volleyball 5+1']
 
 Teams = ['Knights', 'Spartans', 'Samurai', 'Ninja'] if (options.team is None) else options.team
+Player = getpass.getuser() if(options.player is None) else options.player
 
 team_details = get_team_details(file, 'Summary')
 pd = load_excel_into_pandas(file, sheet)
 team_matrix(pd, team_details, Teams, Sports)
-get_player_details(pd, options.player)
+get_player_details(pd, Player)
