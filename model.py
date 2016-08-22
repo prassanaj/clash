@@ -37,7 +37,7 @@ from tabulate import tabulate
 from optparse import OptionParser
 
 
-def team_matrix(player_df, details, team):
+def team_matrix(player_df, details, team, sports):
     players = player_df.loc[:, ['Team', 'Login', 'Gender', 'Game', 'Ranks', 'Price', 'Sold For']].drop_duplicates()
     players['Login - R'] = players.Login.str.cat(players.Ranks.astype(str), sep=' ').str.cat(players.Gender, sep='-')
 
@@ -52,7 +52,7 @@ def team_matrix(player_df, details, team):
         print '~~~~~~~~' * 10
         t = players[players.Team == team]
         player_details = {}
-        for s in Sports:
+        for s in sports:
             player_details[s.replace('~', ' ')] = list(t[t.Game == s.split(' ')[0].replace('~', ' ')]['Login - R'])
         print tabulate(player_details, headers='keys', tablefmt='simple')
         print
@@ -103,7 +103,8 @@ parser.add_option('-p', '--player', dest='player', action='append', help='Specif
 file = 'Clash.xlsx'
 sheet = 'Sport n Player List'
 
-Sports = ['Athletics 4+2', 'Badminton 3+1', 'Basketball 4', 'Carrom 2+1', 'Chess 4+1', 'Cricket 5', 'Foosball 5+2',
+# Sports list w/ male+female minimum requirement.
+Sports = ['Athletics 4+2', 'Badminton 4+1', 'Basketball 4', 'Carrom 3+1', 'Chess 4+1', 'Cricket 5', 'Foosball 5+2',
           'Football 5', 'Snooker 4+1', 'Squash 3+1', 'Swimming 3+1', 'Table~Tennis 5+1', 'Tennis 6+1', 'Throwball 5',
           'Volleyball 5+1']
 
@@ -111,5 +112,5 @@ Teams = ['Knights', 'Spartans', 'Samurai', 'Ninja'] if (options.team is None) el
 
 team_details = get_team_details(file, 'Summary')
 pd = load_excel_into_pandas(file, sheet)
-team_matrix(pd, team_details, Teams)
+team_matrix(pd, team_details, Teams, Sports)
 get_player_details(pd, options.player)
