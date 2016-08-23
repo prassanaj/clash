@@ -12,10 +12,11 @@ player -- userlogin
 team -- Ninja, Samurai, Spartans, Knights
 
 """
+import getpass
 from pandas import pandas
 from tabulate import tabulate
 from optparse import OptionParser
-import getpass
+
 
 def team_matrix(player_df, details, team, sports):
     players = player_df.loc[:, ['Team', 'Login', 'Gender', 'Game', 'Ranks', 'Price', 'Sold For']].drop_duplicates()
@@ -66,6 +67,7 @@ def load_excel_into_pandas(file, sheet):
     sdf = df.sort_values(by=['Team', 'Game', 'Ranks'])
     return sdf;
 
+
 def get_team_details(file, sheet):
     df = pandas.read_excel(file, sheet)
     return df.set_index('Team').T.to_dict('list')
@@ -74,14 +76,14 @@ def get_team_details(file, sheet):
 parser = OptionParser()
 
 parser.add_option('-t', '--team', dest='team', action='append',
-                  help='Specify the team name.  Ninja, Samurai, Spartans, '
-                       'Knights')
-parser.add_option('-p', '--player', dest='player', action='append', help='Specify a player')
+                  help='Specify the team name. Considers all otherwise.')
+parser.add_option('-p', '--player', dest='player', action='append', help='Specify a player. Defaults to you')
 
 (options, args) = parser.parse_args()
 
-file = 'Clash.xlsx'
-sheet = 'Sport n Player List'
+# This excel file is pre-arranged w/ few sheets, Ask me for the file.
+Excel = 'Clash.xlsx'
+Sheet = 'Sport n Player List'
 
 # Sports list w/ male+female minimum requirement.
 Sports = ['Athletics 4+2', 'Badminton 4+1', 'Basketball 4', 'Carrom 3+1', 'Chess 4+1', 'Cricket 5', 'Foosball 5+2',
@@ -91,7 +93,8 @@ Sports = ['Athletics 4+2', 'Badminton 4+1', 'Basketball 4', 'Carrom 3+1', 'Chess
 Teams = ['Knights', 'Spartans', 'Samurai', 'Ninja'] if (options.team is None) else options.team
 Player = getpass.getuser() if(options.player is None) else options.player
 
-team_details = get_team_details(file, 'Summary')
-pd = load_excel_into_pandas(file, sheet)
+team_details = get_team_details(Excel, 'Summary')
+pd = load_excel_into_pandas(Excel, Sheet)
 team_matrix(pd, team_details, Teams, Sports)
 get_player_details(pd, Player)
+
