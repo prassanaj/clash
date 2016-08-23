@@ -49,8 +49,8 @@ def get_player_details(player_df, name):
 
     for p in p_names:
         person = player[player.Login == p]
-        person_dict = {'Name': [p], 'Gender': [person.iloc[1, 1]], 'Base Price': [person.iloc[1, 4]],
-                       'Max Price': [person.iloc[1, 4] * 4]}
+        person_dict = {'Name': [p], 'Gender': [person.iloc[0, 1]], 'Base Price': [person.iloc[0, 4]],
+                       'Max Price': [person.iloc[0, 4] * 4]}
 
         print '- - - - - ' * 10
         print tabulate(person_dict, headers='keys', tablefmt='simple')
